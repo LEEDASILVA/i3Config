@@ -91,13 +91,18 @@ bindsym $mod+space focus mode_toggle
 # focus the parent container
 bindsym $mod+a focus parent
 
+# open flame shot for the screen shots
+# default one :
+# bindsym Control+Print exec gnome-screenshot -i
+bindsym Control+Print exec flameshot gui
+
 # focus the child container
 #bindsym $mod+d focus child
 
 set $workspace1 "1: "
 set $workspace2 "2: "
 set $workspace3 "3: "
-set $workspace4 "4: "
+set $workspace4 "4: "
 set $workspace5 "5: "
 set $workspace6 "6: "
 
@@ -169,7 +174,6 @@ bindsym $mod+r mode "resize"
 # desable the bords on the sides
 hide_edge_borders both
 
-
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 #isntall i3blocks looks better and gives feedback from battery
@@ -179,23 +183,101 @@ bar {
             background #000000
             statusline #ffffff
             separator #666666
-            focused_workspace  #031F3C #031F3C #ffffff
+            focused_workspace  #ffffff #031F3C #ffffff
             active_workspace   #333333 #5f676a #ffffff
             inactive_workspace #333333 #222222 #888888
             urgent_workspace   #2f343a #900000 #ffffff
             binding_mode       #2f343a #900000 #ffffff
         }
         status_command i3blocks -c ~/.config/i3/i3blocks.conf
+        separator_symbol "|"
 }
 
-# Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+
-bindsym XF86AudioLowerVolume exec amixer sset Master 5%-
-<<<<<<< Updated upstream
-bindsym XF86AudioMute exec amixer -q set Master toggle
-=======
-bindsym XF86AudioMute exec --no-startup-id amixer -q -D pulse sset Master toggle
->>>>>>> Stashed changes
+# for_window let i3 execute any command when it encounters a specific window
+# making pop up and task dialogs as a window
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+
+# minimum size of that window
+floating_minimum_size 500 x 250
+floating_maximum_size -1 x -1
+
+# if we want borders on the windows
+# default_border normal|pixel <px>
+# default_floating_border normal|none|pixel
+
+# align title at center
+title_align center
+
+gaps inner 5
+gaps outer 5
+smart_gaps on
+
+# ---- set gap
+set $mode_gaps Gaps: [o]uter, [i]nner
+set $mode_gaps_outer Outer gaps: =|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner gaps: =|-|0 (local), Shift + +|-|0 (global)
+
+mode "$mode_gaps" {
+    bindsym o       mode "$mode_gaps_outer"
+    bindsym i       mode "$mode_gaps_inner"
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps_inner" {
+    bindsym plus       gaps inner current plus 5
+    bindsym minus      gaps inner current minus 5
+    bindsym 0          gaps inner current set 0
+
+    bindsym Shift+plus       gaps inner all plus 5
+    bindsym Shift+minus      gaps inner all minus 5
+    bindsym Shift+0          gaps inner all set 0
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_outer" {
+    bindsym plus       gaps outer current plus 5
+    bindsym minus      gaps outer current minus 5
+    bindsym 0          gaps outer current set 0
+
+    bindsym Shift+plus       gaps outer all plus 5
+    bindsym Shift+minus      gaps outer all minus 5
+    bindsym Shift+0          gaps outer all set 0
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+# ----
+
+# ---
+# binding mode <https://i3wm.org/docs/userguide.html#configuring>
+# shutdown / restart / suspend...
+set $mode_system System [l]ock, [s]uspend, [h]ibernate, [r]eboot, [p]oweroff
+
+mode "$mode_system" {
+    # to lock the screen with a img
+    bindsym l exec i3lock -t -i ~/Pictures/wallpaper.png, mode "default"
+    bindsym l exec --no-startup-id $i3lockwall, mode "default"
+    bindsym s exec systemctl suspend, mode "default"
+    bindsym h exec systemctl hibernate, mode "default"
+    bindsym r exec systemctl reboot, mode "default"
+    bindsym p exec systemctl poweroff -i, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym Control+SHIFT+a mode "$mode_system"
+# -----
+
 
 # Sreen brightness controls :)
 bindsym XF86MonBrightnessUp exec /home/lee/.config/i3/a.sh + # increase screen brightness
@@ -205,10 +287,7 @@ bindsym XF86MonBrightnessDown exec /home/lee/.config/i3/a.sh - # decrease screen
 bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh
 
 # wallpaper setup
-exec_always feh --bg-scale ~/Pictures/wallpaper.png
-
-#to lock the screen with a img
-bindsym Control+SHIFT+a exec i3lock -t -i ~/Pictures/wallpaper.png
+exec feh --bg-fill /home/lee/Pictures/wallpaper.png
 
 # mic
 bindsym $mod+XF86AudioMute exec amixer -q set 'Rear Mic' toggle && killall -SIGUSR1 i3status
@@ -217,17 +296,53 @@ bindsym $mod+XF86AudioLowerVolume exec amixer -q set 'Rear Mic' 2dB- unmute && k
 
 # open programs automatically in startup, giving some seconds to start up
 # for now just terminals :D
-<<<<<<< Updated upstream
-exec_always gnome-terminal
-exec_always gnome-terminal
-exec_always code
-=======
 exec gnome-terminal
 exec gnome-terminal
 exec code
->>>>>>> Stashed changes
+exec firefox
 
 # show internet connection
 exec_always nm-applet
 
 exec xrandr --output DP-1 --off --output HDMI-1 --mode 2560x1440 --pos 1920x0 --rotate left --output eDP-1 --primary --mode 1920x1080 --pos 0x608 --rotate normal --output HDMI-2 --off
+# Review the lines below and append to ~/.config/i3/config
+
+#----------------------------#
+
+## Volume control
+
+# Path to volume control, without trailing slash
+set $volumepath ~/.config/i3/i3-volume/i3-volume
+
+# Command for the status line
+#   ie: i3blocks, i3status
+set $statuscmd i3blocks
+
+# Signal used to update the status line
+#   i3blocks uses SIGRTMIN+10 by default
+#   i3status uses SIGUSR1 by default
+set $statussig SIGUSR1
+
+# Amount to increase/decrease volume as a percentage
+set $volumestep 5
+
+# pulseaudio-utils settings
+#
+# Symbolic name for sink (numeric index not supported)
+#   Recommended: comment out this setting and omit the -s option to use default sink
+#   List sink names: pacmd list-sinks | awk -F "[<>]" '/^\s+name: <.*>/{print $2}'
+#set $sinkname alsa_output.pci-0000_00_1b.0.analog-stereo
+
+# Using pulseaudio-utils (append "-s $sinkname" without quotes to override default sink)
+bindsym XF86AudioRaiseVolume exec --no-startup-id $volumepath/volume -n -t $statuscmd -u $statussig up $volumestep
+bindsym XF86AudioLowerVolume exec --no-startup-id $volumepath/volume -n -t $statuscmd -u $statussig down $volumestep
+bindsym XF86AudioMute        exec --no-startup-id $volumepath/volume -n -t $statuscmd -u $statussig mute
+
+# not needed if we using the upper script
+# Pulse Audio controls
+# bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+
+# bindsym XF86AudioLowerVolume exec amixer sset Master 5%-
+# bindsym XF86AudioMute exec --no-startup-id amixer -q -D pulse sset Master toggle
+
+# sound when charging and descharging
+# exec /home/lee/.config/i3/sound.sh
