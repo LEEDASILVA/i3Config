@@ -183,14 +183,16 @@ bar {
             background #000000
             statusline #ffffff
             separator #666666
-            focused_workspace  #ffffff #031F3C #ffffff
-            active_workspace   #333333 #5f676a #ffffff
-            inactive_workspace #333333 #222222 #888888
-            urgent_workspace   #2f343a #900000 #ffffff
+            focused_workspace  #00FF77 #000000 #00FF77
+            active_workspace   #000000 #000000 #00FF77
+            inactive_workspace #000000 #000000 #888888
+            urgent_workspace   #2f343a #900000 #00FF77
             binding_mode       #2f343a #900000 #ffffff
         }
+        # strip_workspace_numbers yes
         status_command i3blocks -c ~/.config/i3/i3blocks.conf
         separator_symbol "|"
+        height 25
 }
 
 # for_window let i3 execute any command when it encounters a specific window
@@ -201,10 +203,6 @@ for_window [window_role="task_dialog"] floating enable
 # minimum size of that window
 floating_minimum_size 500 x 250
 floating_maximum_size -1 x -1
-
-# if we want borders on the windows
-# default_border normal|pixel <px>
-# default_floating_border normal|none|pixel
 
 # align title at center
 title_align center
