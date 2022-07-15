@@ -1,0 +1,147 @@
+#!/bin/bash
+# ▁▂▃▅▆▇
+
+
+
+SAVE2=/tmp/i3blocks_cpu_usage_1
+
+
+declare -A graph=( 
+  ["1"]="\u2581" # ▁
+  ["2"]="\u2582" # ▂
+  ["3"]="\u2583" # ▃
+  ["4"]="\u2584" # ▅
+  ["5"]="\u2585" # ▆
+  ["6"]="\u2586" # ▇
+  ["7"]="\u2587" # 
+  ["8"]="\u2588" # 
+)
+
+#declare -A graph=(
+#  ["11"]="\u28C0" # ⣀
+#  ["12"]="\u28E0" # ⣠
+#  ["13"]="\u28F0" # ⣰
+#  ["14"]="\u28F8" # ⣸
+#  ["21"]="\u28C4" # ⣄
+#  ["22"]="\u28E4" # ⣤
+#  ["23"]="\u28F4" # ⣴
+#  ["24"]="\u28FC" # ⣼
+#  ["31"]="\u28C6" # ⣆
+#  ["32"]="\u28E6" # ⣦
+#  ["33"]="\u28F6" # ⣶
+#  ["34"]="\u28FE" # ⣾
+#  ["41"]="\u28C7" # ⣇
+#  ["42"]="\u28E7" # ⣧
+#  ["43"]="\u28F7" # ⣷
+#  ["44"]="\u28FF" # ⣿
+#)
+
+if [[ ! -e $SAVE2 ]]
+then
+  echo "1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1" > $SAVE2
+fi
+
+val=(`cat $SAVE2`)
+
+usage=$((10000 - `mpstat 1 1 | tail -1 | rev | cut -d ' ' -f 1 | rev | tr -d .`))
+
+if [[ $usage -ge 9000 ]]
+then
+  val=(${val[@]:1:18} 8)
+elif [[ $usage -ge 7750 ]]
+then
+  val=(${val[@]:1:18} 7)
+elif [[ $usage -ge 6500 ]]
+then
+  val=(${val[@]:1:18} 6)
+elif [[ $usage -ge 5250 ]]
+then
+  val=(${val[@]:1:18} 5)
+elif [[ $usage -ge 4000 ]]
+then
+  val=(${val[@]:1:18} 4)
+elif [[ $usage -ge 2750 ]]
+then
+  val=(${val[@]:1:18} 3)
+elif [[ $usage -ge 1000 ]]
+then
+  val=(${val[@]:1:18} 2)
+else
+  val=(${val[@]:1:18} 1)
+fi
+
+#if [[ $usage -ge 7500 ]]
+#then
+#  val=(${val[@]:1:18} 4)
+#elif [[ $usage -ge 5000 ]]
+#then
+#  val=(${val[@]:1:18} 3)
+#elif [[ $usage -ge 2500 ]]
+#then
+#  val=(${val[@]:1:18} 2)
+#else
+#  val=(${val[@]:1:18} 1)
+#fi
+
+# echo -ne ${graph[${val[0]}${val[1]}]}${graph[${val[2]}${val[3]}]}${graph[${val[4]}${val[5]}]}${graph[${val[6]}${val[7]}]}${graph[${val[8]}${val[9]}]}${graph[${val[10]}${val[11]}]}${graph[${val[12]}${val[13]}]}${graph[${val[14]}${val[15]}]}${graph[${val[16]}${val[17]}]}
+echo -ne ${graph[${val[0]}]}${graph[${val[1]}]}${graph[${val[2]}]}${graph[${val[3]}]}${graph[${val[4]}]}${graph[${val[5]}]}${graph[${val[6]}]}${graph[${val[7]}]}${graph[${val[8]}]}${graph[${val[9]}]}${graph[${val[10]}]}${graph[${val[11]}]}${graph[${val[12]}]}${graph[${val[13]}]}${graph[${val[14]}]}${graph[${val[15]}]}${graph[${val[16]}]}${graph[${val[17]}]}
+printf " %.2f%%\n" $((usage / 100)).$((usage % 100))
+
+echo ${val[@]} > $SAVE2
+
+
+#!/usr/bin/perl
+#
+# Copyright 2014 Pierre Mavro <deimos@deimos.fr>
+# Copyright 2014 Vivien Didelot <vivien@didelot.org>
+# Copyright 2014 Andreas Guldstrand <andreas.guldstrand@gmail.com>
+#
+# Licensed under the terms of the GNU GPL v3, or any later version.
+
+#use strict;
+#use warnings;
+#use utf8;
+#use Getopt::Long;
+
+# default values
+#my $t_warn = 50;
+#my $t_crit = 80;
+#my $cpu_usage = -1;
+
+#sub help {
+#    print "Usage: cpu_usage [-w <warning>] [-c <critical>]\n";
+#    print "-w <percent>: warning threshold to become yellow\n";
+#    print "-c <percent>: critical threshold to become red\n";
+#    exit 0;
+#}
+
+#GetOptions("help|h" => \&help,
+#           "w=i"    => \$t_warn,
+#           "c=i"    => \$t_crit);
+
+# Get CPU usage
+#$ENV{LC_ALL}="en_US"; # if mpstat is not run under en_US locale, things may break, so make sure it is
+#open (MPSTAT, 'mpstat 1 1 |') or die;
+#while (<MPSTAT>) {
+#    if (/^Average.*\s+(\d+\.\d+)/) {
+#        $cpu_usage = 100 - $1; # 100% - %idle
+#        last;
+#    }
+#}
+#close(MPSTAT);
+
+#$cpu_usage eq -1 and die 'Can\'t find CPU information';
+
+# Print short_text, full_text
+#printf "%.2f%%\n", $cpu_usage;
+#printf "%.2f%%\n", $cpu_usage;
+
+# Print color, if needed
+#if ($cpu_usage >= $t_crit) {
+	#print "#FF0000\n";
+    #exit 33;
+    #} elsif ($cpu_usage >= $t_warn) {
+	#    print "#FFFC00\n";
+    #}
+
+#exit 0;

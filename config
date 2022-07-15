@@ -179,6 +179,7 @@ hide_edge_borders both
 #isntall i3blocks looks better and gives feedback from battery
 bar {
         position top
+        separator_symbol ""
         colors {
             background #000000
             statusline #ffffff
@@ -189,10 +190,8 @@ bar {
             urgent_workspace   #2f343a #900000 #00FF77
             binding_mode       #2f343a #900000 #ffffff
         }
-        # strip_workspace_numbers yes
-        status_command i3blocks -c ~/.config/i3/i3blocks.conf
-        separator_symbol "|"
-        height 25
+        status_command ~/.config/i3/statusBar.sh
+        height 30
 }
 
 # for_window let i3 execute any command when it encounters a specific window
@@ -207,8 +206,8 @@ floating_maximum_size -1 x -1
 # align title at center
 title_align center
 
-gaps inner 5
-gaps outer 5
+gaps inner 6
+gaps outer 6
 smart_gaps on
 
 # ---- set gap
@@ -278,8 +277,8 @@ bindsym Control+SHIFT+a mode "$mode_system"
 
 
 # Sreen brightness controls :)
-bindsym XF86MonBrightnessUp exec /home/lee/.config/i3/a.sh + # increase screen brightness
-bindsym XF86MonBrightnessDown exec /home/lee/.config/i3/a.sh - # decrease screen brightness
+bindsym XF86MonBrightnessUp exec /home/lee/.config/i3/a.sh 10 # increase screen brightness
+bindsym XF86MonBrightnessDown exec /home/lee/.config/i3/a.sh -10 # decrease screen brightness
 
 # Touchpad controls
 bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh
@@ -344,3 +343,7 @@ bindsym XF86AudioMute        exec --no-startup-id $volumepath/volume -n -t $stat
 
 # sound when charging and descharging
 # exec /home/lee/.config/i3/sound.sh
+
+######### i3 show numpad and caps
+bindsym --release Caps_Lock exec pkill -SIGRTMIN+11 i3blocks
+bindsym --release Num_Lock  exec pkill -SIGRTMIN+11 i3blocks
