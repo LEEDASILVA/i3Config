@@ -1,52 +1,64 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-letters="a\ne\ni\no\nu\nc\nA\nE\nI\nO\nU\nC"
+# exit on error, undefined vars, and pipe failures
+set -euo pipefail
 
-chosen_letter=$(echo -e "$letters" | dmenu -i -p "Choose a letter:")
+# dependency check
+check_dependencies() {
+    local deps=("dmenu" "xclip" "notify-send")
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" >/dev/null 2>&1; then
+            notify-send "Error" "Required dependency '$dep' is not installed."
+            exit 1
+        fi
+    done
+}
 
-case "$chosen_letter" in
-  a) accents="á\nÁ\nÂ\nä\nÄ" ;;
-  A) accents="À\nà\nâ\nä\nã" ;;
-  e) accents="é\nè\nê\në" ;;
-  E) accents="È\nÉ\nÊ\nË" ;;
-  i) accents="í\nì\nî\nï" ;;
-  I) accents="Ì\nÍ\nÎ\nÏ" ;;
-  o) accents="ó\nò\nô\nö\nõ" ;;
-  O) accents="ó\nÒ\nÔ\nÖ\nÕ" ;;
-  u) accents="ú\nù\nû\nü" ;;
-  U) accents="Ù\nÚ\nÛ\nÜ" ;;
-  c) accents="ç" ;;
-  C) accents="Ç" ;;
-  *) notify-send "Error" "Invalid letter chosen"; exit 1 ;;
-esac
+# Function to show dmenu and handle selection
+show_dmenu() {
+    local prompt="$1"
+    local options="$2"
+    echo "$options" | dmenu -i -p "$prompt" || exit 1
+}
 
-chosen_accent=$(echo -e "$accents" | dmenu -i -p "Choose an accent for '$chosen_letter':")
+# insert into clipboard
+handle_selection() {
+    local char="$1"
+    printf "%s" "$char" | xclip -selection clipboard
+    notify-send "Character copied" "$char"
+}
 
-if [ -n "$chosen_accent" ]; then
-  echo -n "$chosen_accent" | xclip -selection clipboard
-  notify-send "Copied to clipboard" "$chosen_accent"
-fi
+declare -A accent_map=(
+    [a]=$'á\nà\nâ\nä\nã\nÁ\nÀ\nÂ\nÄ\nÃ'
+    [e]=$'é\nè\nê\në\nÉ\nÈ\nÊ\nË'
+    [i]=$'í\nì\nî\nï\nÍ\nÌ\nÎ\nÏ'
+    [o]=$'ó\nò\nô\nö\nõ\nÓ\nÒ\nÔ\nÖ\nÕ'
+    [u]=$'ú\nù\nû\nü\nÚ\nÙ\nÛ\nÜ'
+    [n]=$'ñ\nÑ'
+    [c]=$'ç\nÇ'
+    [y]=$'ý\nÿ\nÝ\nŸ'
+)
 
-# BACK TIC
-# à, è, ì, ò, ù
-# À, È, Ì, Ò, Ù
+main() {
+    check_dependencies
 
-# FRONT TICK
-# á, é, í, ó, ú, ý
-# Á, É, Í, Ó, Ú, Ý
+    local letters
+    letters=$(printf "%s\n" "${!accent_map[@]}" | sort)
 
-# CIRCUMFLEX
-# â, ê, î, ô, û
-# Â, Ê, Î, Ô, Û
+    local chosen_letter
+    chosen_letter=$(show_dmenu "Choose a letter:" "$letters")
 
-# TIL
-# ã, ñ, õ
-# Ã, Ñ, Õ
+    if [[ ! -v accent_map[$chosen_letter] ]]; then
+        notify-send "Error" "Invalid letter chosen"
+        exit 1
+    fi
 
-# CEDILLA
-# ç, Ç
+    local chosen_accent
+    chosen_accent=$(show_dmenu "Choose an accent for '$chosen_letter':" "${accent_map[$chosen_letter]}")
 
-# TREMA
-# ä, ë, ï, ö, ü, ÿ
-# Ä, Ë, Ï, Ö, Ü, Ÿ
+    if [[ -n "$chosen_accent" ]]; then
+        handle_selection "$chosen_accent"
+    fi
+}
 
+main
