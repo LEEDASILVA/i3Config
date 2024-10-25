@@ -1,17 +1,22 @@
 #!/bin/bash
 
-letters="a\ne\ni\no\nu\nn\nc"
+letters="a\ne\ni\no\nu\nc\nA\nE\nI\nO\nU\nC"
 
 chosen_letter=$(echo -e "$letters" | dmenu -i -p "Choose a letter:")
 
 case "$chosen_letter" in
-  a) accents="á\nà\nâ\nä\nã" ;;
+  a) accents="á\nÁ\nÂ\nä\nÄ" ;;
+  A) accents="À\nà\nâ\nä\nã" ;;
   e) accents="é\nè\nê\në" ;;
+  E) accents="È\nÉ\nÊ\nË" ;;
   i) accents="í\nì\nî\nï" ;;
+  I) accents="Ì\nÍ\nÎ\nÏ" ;;
   o) accents="ó\nò\nô\nö\nõ" ;;
+  O) accents="ó\nÒ\nÔ\nÖ\nÕ" ;;
   u) accents="ú\nù\nû\nü" ;;
-  n) accents="ñ" ;;
+  U) accents="Ù\nÚ\nÛ\nÜ" ;;
   c) accents="ç" ;;
+  C) accents="Ç" ;;
   *) notify-send "Error" "Invalid letter chosen"; exit 1 ;;
 esac
 
