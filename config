@@ -36,7 +36,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec rofi -show run -theme /home/lee/.config/i3/iceberg-dark.rasi
+bindsym $mod+d exec rofi -show run -theme /home/lee/.config/i3/rofi/iceberg-dark.rasi
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
@@ -45,10 +45,10 @@ bindsym $mod+d exec rofi -show run -theme /home/lee/.config/i3/iceberg-dark.rasi
 client.focused #000000 #031F3C #ffffff #8A1919 #A1A1A1
 
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+ccedilla focus right
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -57,10 +57,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+ccedilla move right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -69,10 +69,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+h split h
+bindsym $mod+Ctrl+h split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+Ctrl+v split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -93,8 +93,8 @@ bindsym $mod+a focus parent
 
 # open flame shot for the screen shots
 # default one :
-# bindsym Control+Print exec gnome-screenshot -i
-bindsym Control+Print exec flameshot gui
+# bindsym Print exec gnome-screenshot -i
+bindsym Print exec flameshot gui
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -106,6 +106,12 @@ set $workspace4 "4: "
 set $workspace5 "5: "
 set $workspace6 "6: "
 
+# # save screen layout
+# workspace $workspace1 output DP-1
+# workspace $workspace2 output DP-1
+# workspace $workspace4 output DP-1
+# workspace $workspace3 output HDMI-1
+# workspace $workspace6 output eDP-1
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
@@ -136,6 +142,8 @@ assign [class="Firefox"] $workspace1
 assign [class="discord"] $workspace6
 for_window [class="Spotify"] move container to workspace $workspace3
 
+# for now I'm trying out noe vim
+# so i will stop opening vscode on this workspace
 assign [class="Code"] $workspace4
 
 # reload the configuration file
@@ -153,10 +161,10 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym ccedilla resize grow width 10 px or 10 ppt
+        bindsym l resize shrink width 10 px or 10 ppt
+        bindsym j resize grow height 10 px or 10 ppt
+        bindsym k resize shrink height 10 px or 10 ppt
+        bindsym h resize grow width 10 px or 10 ppt
 
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
@@ -251,8 +259,18 @@ mode "$mode_gaps_outer" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
+
 # ----
 
+bindsym $mod+grave exec --no-startup-id ~/.config/i3/accents.sh
+
+# ----
+
+# start compton so that the lock screen would be transparent
+# exec --no-startup-id compton --config ~/.config/i3/compton.conf
+
+# auto lock the conputer with a timeout of 5min
+# exec --no-startup-id xautolock -time 5 -locker '~/.config/i3/matrixLock.sh'
 # ---
 # binding mode <https://i3wm.org/docs/userguide.html#configuring>
 # shutdown / restart / suspend...
@@ -260,8 +278,9 @@ set $mode_system System [l]ock, [s]uspend, [h]ibernate, [r]eboot, [p]oweroff
 
 mode "$mode_system" {
     # to lock the screen with a img
-    bindsym l exec i3lock -t -i ~/Pictures/wallpaper.png, mode "default"
-    bindsym l exec --no-startup-id $i3lockwall, mode "default"
+    bindsym l exec i3lock -t -i /home/lee/Pictures/numbat_wallpaper_dark.jpg, mode "default"
+    # bindsym l exec --no-startup-id $i3lockwall, mode "default"
+    # bindsym l exec --no-startup-id ~/.config/i3/matrixLock.sh, mode "default"
     bindsym s exec systemctl suspend, mode "default"
     bindsym h exec systemctl hibernate, mode "default"
     bindsym r exec systemctl reboot, mode "default"
@@ -277,14 +296,14 @@ bindsym Control+SHIFT+a mode "$mode_system"
 
 
 # Sreen brightness controls :)
-bindsym XF86MonBrightnessUp exec /home/lee/.config/i3/a.sh 10 # increase screen brightness
-bindsym XF86MonBrightnessDown exec /home/lee/.config/i3/a.sh -10 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec /home/lee/.config/i3/a.sh + # increase screen brightness
+bindsym XF86MonBrightnessDown exec /home/lee/.config/i3/a.sh - # decrease screen brightness
 
 # Touchpad controls
-bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh
+# bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh
 
 # wallpaper setup
-exec feh --bg-fill /home/lee/Pictures/wallpaper.png
+exec feh --bg-fill /home/lee/Pictures/numbat_wallpaper_dark.jpg
 
 # mic
 bindsym $mod+XF86AudioMute exec amixer -q set 'Rear Mic' toggle && killall -SIGUSR1 i3status
@@ -295,13 +314,16 @@ bindsym $mod+XF86AudioLowerVolume exec amixer -q set 'Rear Mic' 2dB- unmute && k
 # for now just terminals :D
 exec gnome-terminal
 exec gnome-terminal
-exec code
+
+# ? this is vscode which i will be switching to nvim
+# Im currently trying out neo vim and lazyvim so i will not work with vscode for a will !!
+# exec code
+
 exec firefox
 
 # show internet connection
 exec_always nm-applet
 
-exec xrandr --output DP-1 --off --output HDMI-1 --mode 2560x1440 --pos 1920x0 --rotate left --output eDP-1 --primary --mode 1920x1080 --pos 0x608 --rotate normal --output HDMI-2 --off
 # Review the lines below and append to ~/.config/i3/config
 
 #----------------------------#
@@ -318,7 +340,7 @@ set $statuscmd i3blocks
 # Signal used to update the status line
 #   i3blocks uses SIGRTMIN+10 by default
 #   i3status uses SIGUSR1 by default
-set $statussig SIGUSR1
+set $statussig SIGRTMIN+10
 
 # Amount to increase/decrease volume as a percentage
 set $volumestep 5
@@ -335,6 +357,12 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id $volumepath/volume -n -t $stat
 bindsym XF86AudioLowerVolume exec --no-startup-id $volumepath/volume -n -t $statuscmd -u $statussig down $volumestep
 bindsym XF86AudioMute        exec --no-startup-id $volumepath/volume -n -t $statuscmd -u $statussig mute
 
+# Music Buttons
+bindsym $mod+Ctrl+Down exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause"
+bindsym $mod+Ctrl+Up exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop"
+bindsym $mod+Ctrl+Left exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous"
+bindsym $mod+Ctrl+Right exec "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next"
+
 # not needed if we using the upper script
 # Pulse Audio controls
 # bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+
@@ -344,6 +372,9 @@ bindsym XF86AudioMute        exec --no-startup-id $volumepath/volume -n -t $stat
 # sound when charging and descharging
 # exec /home/lee/.config/i3/sound.sh
 
-######### i3 show numpad and caps
-bindsym --release Caps_Lock exec pkill -SIGRTMIN+11 i3blocks
-bindsym --release Num_Lock  exec pkill -SIGRTMIN+11 i3blocks
+# i3 show numpad and caps
+# bindsym --release Caps_Lock exec pkill -SIGRTMIN+11 i3blocks
+# bindsym --release Num_Lock  exec pkill -SIGRTMIN+11 i3blocks
+
+# start up screen for multiple screens
+exec_always --no-startup-id $HOME/.screenlayout/horizontal_middle.sh
